@@ -5,7 +5,7 @@ import Detailspage from './Detailspage';
 import LoginPage from './LoginPage';
 import ChangePassword from './ChangePassword';
 
-import { BrowserRouter as Router,Route, Switch } from "react-router-dom";
+//import { BrowserRouter as Router,Route, Switch } from "react-router-dom";
 import { db } from "./firebaseConfig";
 import { collection, getDocs , addDoc, deleteDoc, doc } from "firebase/firestore";
  //import { async } from '@firebase/util';
