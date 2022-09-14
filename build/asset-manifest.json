@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/registration-db-admin/static/css/main.c8b04179.css",
+    "main.js": "/registration-db-admin/static/js/main.1b6a061e.js",
+    "index.html": "/registration-db-admin/index.html",
+    "main.c8b04179.css.map": "/registration-db-admin/static/css/main.c8b04179.css.map",
+    "main.1b6a061e.js.map": "/registration-db-admin/static/js/main.1b6a061e.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.c8b04179.css",
+    "static/js/main.1b6a061e.js"
+  ]
+}

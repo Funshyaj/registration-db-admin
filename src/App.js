@@ -1,10 +1,12 @@
 import './index.css';
-import Home from './Home';
+import Admin from './Admin';
+
+
 
 function App() {
   return (
     <div className="App">
-     <Home />
+      <Admin />
     </div>
   );
 }
