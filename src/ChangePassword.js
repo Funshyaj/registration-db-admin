@@ -3,7 +3,7 @@ const ChangePassword = (props) => {
     return (
         <div className="changePassword-page">
             <button onClick={()=> props.closeChangePasswordPage()}>X</button>
-            <h3></h3>
+            {/* <h3></h3> */}
             <form className="changePassword-form">
              <div id="mail">
                 <input className="email" type="password" value={props.OldPassword} onChange={(e)=>props.handlePasswordChange(e)} id="oldPassword"  placeholder="Enter old Password" required />

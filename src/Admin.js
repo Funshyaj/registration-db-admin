@@ -1,23 +1,14 @@
-import { useState /*,useEffect*/ } from 'react';
+import { useState ,useEffect } from 'react';
 import './Admin.css';
 import AddPage from './AddPage';
 import Detailspage from './Detailspage';
 import LoginPage from './LoginPage';
 import ChangePassword from './ChangePassword';
-
-//import { BrowserRouter as Router,Route, Switch } from "react-router-dom";
-import { db } from "./firebaseConfig";
-import { collection, getDocs , addDoc, deleteDoc, doc } from "firebase/firestore";
- //import { async } from '@firebase/util';
-
-
-//getting data from database
-const regCollection = collection(db, "Information ");
+import axios from "axios";
 
 
 const Admin = () => {
-//states
-const [info, setInfo] = useState(null)
+
 //loading circle toggle state
 const [isPending, setIsPending] = useState(true)
 
@@ -45,32 +36,49 @@ const [mobileMenuToggle, setMobileMenuToggle] = useState(false)
 //login page toggle
 const [loginPageToggle, setLoginPageToggle] = useState(true)
 const [password, setPassword] = useState("")
+
 //change password page, set state and toggle
 const [newPassword, setNewPassword] = useState("")
 const [oldPassword, setOldPassword] = useState("")
 const [securityKey, setSecurityKey] = useState("")
 const [changePasswordToggle, setChangePasswordToggle] = useState(false)
 
+const [data, setData] = useState(null)
+const [msg, setMsg] = useState(null)
+const Uri = 'http://localhost:4000/';
 
+// const tesDb = [
+//     {id:1, firstName:'Funsho', lastName:'Ajayi', email:"funshao2@DSN", phone:'0807859693',sex:'male'},
+//     {id:2, firstName:'Funsho', lastName:'Ajayi', email:"funshao2@DSN", phone:'0807859693',sex:'male'},
+//     {id:3, firstName:'Funsho', lastName:'Ajayi', email:"funshao2@DSN", phone:'0807859693',sex:'male'},
+// ]
 
-//first things first
-//does this onpage load    
-const firebaseData = []
- getDocs(regCollection)
-    .then((snap)=>{
-        snap.docs.forEach((doc) => firebaseData.push({...doc.data() , id:doc.id}))
-      setIsPending(false)
-    setInfo(firebaseData)
-          })
-    .catch(err=>alert(err.message))
+const fetch = async()=>{
+    await  axios.get(`${Uri}api`)
+     .then(res => {
+     setMsg(res.data.message)
+     setIsPending(false)
+     })
+   .catch((error) => {
+     console.log(error);
+   })   
 
+await  axios.get(`${Uri}get-people`)
+   .then(res => {
+    setData(res.data)
+     setIsPending(false)
+     })
+   .catch((error) => {
+     console.log(error);
+   }) 
+}
 
-//console.log(firebaseData)
-/*useEffect(() => {
-
-  
-
-}, [])*/
+useEffect(() => {
+    window.addEventListener('load', fetch)
+    return () => {
+      window.removeEventListener('load', fetch)
+    }
+  }, [data])
 
 //state storage input function 
 const handleChange = (e)=>{
@@ -88,17 +96,16 @@ const handleChange = (e)=>{
      setPhone(value)
  }
  if(id === "radio1"){
-     setSex("Male")
+     setSex(value)
  }
  if(id === "radio2"){
-     setSex("Female")
+     setSex(value)
  }
  }
    
 //Manual add buttton, addBtn function for online
 const addBtn =(e)=> {
 e.preventDefault()
-  
     let obj ={
         firstName:firstName,
         lastName:lastName,
@@ -106,23 +113,19 @@ e.preventDefault()
         email:email,
         phone:phone,
     }  
- // console.log(obj)
 
+    // if feilds are not empty
   if((obj.firstName !== null || "") && (obj.lastName !== null || "")  && (obj.email !== null  || "") && 
   (obj.phone !== null || ""))
   { 
-  // console.log("what")
-addDoc(regCollection, obj)
-    .then(()=>{
-  if((obj.firstName !== null || "") && (obj.lastName !== null || "")  && (obj.email !== null  || "") && 
-  (obj.phone !== null || ""))
-  {alert("Data was added succesfully")
-}
-})
-.catch((error)=> {alert("There was an error :"+ error)})
-}
+        axios.post(`${Uri}add-person`, obj)
+      .then(res => alert(`${firstName} added succesfully, kindly refresh`));
 
-addBtnClic()
+  addBtnClic()
+}
+else{ alert('Please fill all feilds')}
+
+
 }
 
 //addBtn click
@@ -137,7 +140,7 @@ const closeInfoBtn =()=> setShowInfoToggle(!setShowInfoToggle)
 //Show more info btn 
 const showInfoBtn =(e)=> {
 const id = e.target.id
-let personalInfo = info.filter(x=>x.id === id)
+let personalInfo = data.filter(x=>x._id === id)
 
 setShowInfoToggle(true)
 
@@ -146,37 +149,46 @@ setPersonalLastName(personalInfo[0].lastName)
 setPersonalSex(personalInfo[0].sex)
 setPersonalEmail(personalInfo[0].email)
 setPersonalPhone(personalInfo[0].phone)
-setPersonalId(personalInfo[0].id)
+setPersonalId(personalInfo[0]._id)
 }
 
 const updateInfoBtn =(e)=> {
 let id = e.target.id
-//console.log(id)
+
+console.log(`person with id ${id} is ready to be updated`)
 }
 
-const deleteInfoBtn =(e)=> {
-let id = e.target.id
-console.log(id)
+const deleteInfoBtn =async(e)=> {
+let id = e.target.id;
+console.log(`person with id ${id} is ready to be deleted`);
 
-const docRef = doc(db, "Information ", id)
-deleteDoc(docRef)
+ await axios.delete(`${Uri}delete-person/${id}`)
+        .then((res) => {
+            alert('persons data has been successfully deleted!')
+        }).catch((error) => {
+            console.log(error)
+            alert('Some error occured, couldnt delete student')
+        })
+
+        closeInfoBtn()
 }
 
-   //let newB ;
+const refreshBtn = async ()=>{
+await fetch()
+}
 
 //search filter function
 const searchFn =(e)=>{
-    const searchWords = e.target.value.toLowerCase()//.split(" ").join("")
-    const reg = new RegExp(searchWords);
-    //test with regex
- let newB = info.filter(x=> reg.test(x.firstName.toLowerCase()))
+//     const searchWords = e.target.value.toLowerCase()//.split(" ").join("")
+//     const reg = new RegExp(searchWords);
+//     //test with regex
+//  let newB = data.filter(x=> reg.test(x.firstName.toLowerCase()))
 
-if(e.target.value === ""){
-    setInfo(firebaseData)  } 
+if(e.target.value === ""){ } 
 
-        if (newB.length >= 1){
-            setInfo(newB)
-        }
+        // if (newB.length >= 1){
+        //     setData(newB)
+        // }
 }
 
 
@@ -215,7 +227,7 @@ if (id === "newPassword"){
 
 const changePasswordBtn = (e)=>{
     e.preventDefault()
-if (oldPassword === password || "Admin" && securityKey === "Funsho" ){
+if ((oldPassword === password || "Admin") && (securityKey === "Funsho") ){
     setPassword(newPassword)
     setChangePasswordToggle(!changePasswordToggle)
 }
@@ -235,8 +247,8 @@ if (oldPassword === password || "Admin" && securityKey === "Funsho" ){
 </header>
 
 <div className={`${mobileMenuToggle ? "utility-section active" : "utility-section"}`}>
-    <button className="utility-btn" onClick={()=>{setAddInfoDisplayToggle("true")}}>Add data</button>
-    <button className="utility-btn">Refresh</button> 
+    <button className="utility-btn" onClick={()=>setAddInfoDisplayToggle("true")}>Add data</button>
+    <button className="utility-btn"onClick={()=>refreshBtn()}>Refresh</button> 
     <button className="utility-btn" onClick={(e)=>changePasswordBtn(e)}>Change Password</button>
     <button className="utility-btn"  onClick={()=>loginOutBtn()}>Logout</button>
 </div>
@@ -261,12 +273,11 @@ closeChangePasswordPage={(e)=>setChangePasswordToggle(!changePasswordToggle)}
     <AddPage 
     addBtn={(e)=>addBtn(e)}
  closeAddBtn={()=>addBtnClic()}
-    handleChange={()=>handleChange()}
+    handleChange={(e)=>handleChange(e)}
   firstName={firstName}
  lastName={lastName}
   email={email}
   phone={phone}
-  sex={sex} 
      />}
 
 {/*personal info full display page */}
@@ -282,9 +293,8 @@ closeChangePasswordPage={(e)=>setChangePasswordToggle(!changePasswordToggle)}
     updateClick={(e)=>updateInfoBtn(e)}
     deleteClick={(e)=>deleteInfoBtn(e)}
     />}
-
-{isPending && <div className="loader"></div>}    
-{info &&
+      
+{isPending ? <div className="loader"></div> : 
 <div className="main-content">
 <table>
 <thead>
@@ -297,18 +307,18 @@ closeChangePasswordPage={(e)=>setChangePasswordToggle(!changePasswordToggle)}
         </tr>
 </thead>
 <tbody>
-    {info.map((x,y)=>{
+    {data?.map((x,y)=>{
        let styles ={ padding:"0px",} 
 
 
        return(         
- <tr className='person' key={x.id}>
+ <tr className='person' key={y}>
         <td className='number'>{y}</td>
-        <td className="p-name">{x.firstName}{x.lastName}</td>
+        <td className="p-name">{x.firstName} {x.lastName}</td>
         <td className='sex'>{x.sex}</td>
         <td style={styles}>
-       <button className="more-btn" id={x.id} onClick={(e)=>showInfoBtn(e)}>
-                More..
+       <button className="more-btn" id={x._id} onClick={(e)=>showInfoBtn(e)}>
+                More...
 </button>
 </td>
   </tr>
@@ -318,6 +328,9 @@ closeChangePasswordPage={(e)=>setChangePasswordToggle(!changePasswordToggle)}
     </tbody>
     </table>
     </div> }
+    
+{isPending ? <div className="loader"></div> : msg } 
+    
     </div> 
  
     </div>

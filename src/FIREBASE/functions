@@ -1,0 +1,36 @@
+
+// //import { BrowserRouter as Router,Route, Switch } from "react-router-dom";
+ import { db } from "./FIREBASE/firebaseConfig";
+import { collection, getDocs , addDoc, deleteDoc, doc } from "firebase/firestore";
+ //import { async } from '@firebase/util';
+
+
+ //getting data from database
+const regCollection = collection(db, "Information ");
+
+
+//first things first
+//does this onpage load    
+const firebaseData = []
+ getDocs(regCollection)
+    .then((snap)=>{
+        snap.docs.forEach((doc) => firebaseData.push({...doc.data() , id:doc.id}))
+      setIsPending(false)
+    setInfo(firebaseData)
+          })
+    .catch(err=>alert(err.message))
+
+
+    // adding data 
+    addDoc(regCollection, obj)
+    .then(()=>{
+  if((obj.firstName !== null || "") && (obj.lastName !== null || "")  && (obj.email !== null  || "") && 
+  (obj.phone !== null || ""))
+  {alert("Data was added succesfully")
+}
+})
+.catch((error)=> {alert("There was an error :"+ error)})
+
+// deleting data
+const docRef = doc(db, "Information ", id)
+deleteDoc(docRef)
