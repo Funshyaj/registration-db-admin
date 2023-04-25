@@ -99,6 +99,7 @@ background-color: white;
   .utility-section{ 
  position: fixed;
 left: 100%;
+z-index: 2;
 background-color: black;
 width: 80%;
 display: flex;
@@ -106,7 +107,7 @@ height: 100%;
 flex-direction: column;
 gap: 21px;
 align-items: center;
-overflow: auto;
+overflow:auto;
 top: 52px;
 transition: .5s;
   }
@@ -129,9 +130,7 @@ transition: .5s;
 
 
 
-
-
-
+/* screen for tablet and above */
 @media screen and (min-width:768px){
 
   .search{
@@ -161,7 +160,7 @@ transition: .5s;
         flex-direction: column;
         gap: 21px;
         align-items: center;
-        z-index: 1;
+        z-index: 2;
         overflow: auto;
         top: 5%;
         left: 80%; 
