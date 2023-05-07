@@ -3,7 +3,7 @@ import './Admin.css';
 import AddPage from './AddPage';
 import Detailspage from './Detailspage';
 import LoginPage from './LoginPage';
-import ChangePassword from './ChangePassword';
+import ChangePassword from '../pages/ChangePassword';
 
 
 //import { BrowserRouter as Router,Route, Switch } from "react-router-dom";

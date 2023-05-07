@@ -1,13 +1,20 @@
 import { useState ,useEffect } from 'react';
-import './Admin.css';
-import AddPage from './AddPage';
-import Detailspage from './Detailspage';
-import LoginPage from './LoginPage';
-import ChangePassword from './ChangePassword';
+import './styles/Admin.css';
+import AddPage from './pages/AddPage';
+import Detailspage from './pages/Detailspage';
+import LoginPage from './pages/LoginPage';
+import ChangePassword from './pages/ChangePassword';
 import axios from "axios";
 
 
 const Admin = () => {
+
+
+    // const tesDb = [
+    //     {_id:1, firstName:'Funsho', lastName:'Ajayi', email:"funshao2@DSN", phone:'0807859693',sex:'male'},
+    //     {_id:2, firstName:'Femi', lastName:'Ajayi', email:"funshao2@DSN", phone:'0807859693',sex:'male'},
+    //     {_id:3, firstName:'Fitin', lastName:'Ajayi', email:"funshao2@DSN", phone:'0807859693',sex:'male'},
+    // ]
 
 //loading circle toggle state
 const [isPending, setIsPending] = useState(true)
@@ -30,6 +37,8 @@ const [personalPhone, setPersonalPhone] = useState("")
 const [personalId, setPersonalId] = useState(null)
 const [showInfoToggle, setShowInfoToggle] = useState(false)
 
+
+
 //mobile menu toggle
 const [mobileMenuToggle, setMobileMenuToggle] = useState(false)
 
@@ -43,15 +52,11 @@ const [oldPassword, setOldPassword] = useState("")
 const [securityKey, setSecurityKey] = useState("")
 const [changePasswordToggle, setChangePasswordToggle] = useState(false)
 
-const [data, setData] = useState(null)
+const [data, setData] = useState(null);
 const [msg, setMsg] = useState(null)
 const Uri = 'http://localhost:4000/';
 
-// const tesDb = [
-//     {id:1, firstName:'Funsho', lastName:'Ajayi', email:"funshao2@DSN", phone:'0807859693',sex:'male'},
-//     {id:2, firstName:'Funsho', lastName:'Ajayi', email:"funshao2@DSN", phone:'0807859693',sex:'male'},
-//     {id:3, firstName:'Funsho', lastName:'Ajayi', email:"funshao2@DSN", phone:'0807859693',sex:'male'},
-// ]
+
 
 const fetch = async()=>{
     await  axios.get(`${Uri}api`)
@@ -119,9 +124,13 @@ e.preventDefault()
   (obj.phone !== null || ""))
   { 
         axios.post(`${Uri}add-person`, obj)
-      .then(res => alert(`${firstName} added succesfully, kindly refresh`));
+      .then(res => alert(`${firstName} added succesfully, kindly refresh`))
+      .catch((error) => {
+        console.log(error)
+        alert('Couldnt add student')
+    });
 
-  addBtnClic()
+  closeAddInfoPage()
 }
 else{ alert('Please fill all feilds')}
 
@@ -129,19 +138,21 @@ else{ alert('Please fill all feilds')}
 }
 
 //addBtn click
-const addBtnClic =()=> {    
-setAddInfoDisplayToggle(!addInfoDisplayToggle)
+const closeAddInfoPage =()=> {    
+setAddInfoDisplayToggle(!addInfoDisplayToggle);
+setMobileMenuToggle(false);
 }
 
 
-//close btn for full info page
+//close btn for full single user info page
 const closeInfoBtn =()=> setShowInfoToggle(!setShowInfoToggle)
 
 //Show more info btn 
 const showInfoBtn =(e)=> {
 const id = e.target.id
 let personalInfo = data.filter(x=>x._id === id)
-
+// console.log( typeof personalInfo[0]._id)
+// console.log( typeof id)
 setShowInfoToggle(true)
 
 setPersonalFirstName(personalInfo[0].firstName)
@@ -152,10 +163,29 @@ setPersonalPhone(personalInfo[0].phone)
 setPersonalId(personalInfo[0]._id)
 }
 
-const updateInfoBtn =(e)=> {
+const updateInfoBtn = async (e,)=> {
 let id = e.target.id
+e.preventDefault();
 
-console.log(`person with id ${id} is ready to be updated`)
+let obj ={
+    firstName:e.target[0].value,
+    lastName:e.target[1].value,
+    email:e.target[2].value,
+    phone:e.target[3].value,
+    sex: e.target[4].checked ? 'Male' : "Female"
+} 
+
+// console.log(`person with id ${id} is ready to be updated`);
+// console.log(obj)
+
+await axios.put(`${Uri}update-person/${id}`, obj)
+        .then((res) => {
+            alert(obj.firstName +' '+  obj.lastName + 's profile has been updated, Kindly refresh')
+        }).catch((error) => {
+            console.log(error)
+            alert('Some error occured, couldnt update' + obj.firstName + obj.lastName + 's profile')
+        })
+
 }
 
 const deleteInfoBtn =async(e)=> {
@@ -174,21 +204,25 @@ console.log(`person with id ${id} is ready to be deleted`);
 }
 
 const refreshBtn = async ()=>{
+    setIsPending(true);
+    setMobileMenuToggle(false);
 await fetch()
 }
 
 //search filter function
 const searchFn =(e)=>{
-//     const searchWords = e.target.value.toLowerCase()//.split(" ").join("")
-//     const reg = new RegExp(searchWords);
+    const searchWords = e.target.value.toLowerCase()
+    const reg = new RegExp(searchWords);
 //     //test with regex
-//  let newB = data.filter(x=> reg.test(x.firstName.toLowerCase()))
+ let newB = data.filter(x=> reg.test(x.firstName.toLowerCase()))
 
-if(e.target.value === ""){ } 
+if(e.target.value === ""){ 
+fetch()
+} 
 
-        // if (newB.length >= 1){
-        //     setData(newB)
-        // }
+        if (newB.length >= 1){
+            setData(newB)
+        }
 }
 
 
@@ -272,7 +306,7 @@ closeChangePasswordPage={(e)=>setChangePasswordToggle(!changePasswordToggle)}
 {addInfoDisplayToggle && 
     <AddPage 
     addBtn={(e)=>addBtn(e)}
- closeAddBtn={()=>addBtnClic()}
+ closeAddInfoPage={()=>closeAddInfoPage()}
     handleChange={(e)=>handleChange(e)}
   firstName={firstName}
  lastName={lastName}
@@ -290,10 +324,12 @@ closeChangePasswordPage={(e)=>setChangePasswordToggle(!changePasswordToggle)}
    sex={personalSex}
     id={personalId}
     closeClick={()=>closeInfoBtn()}
-    updateClick={(e)=>updateInfoBtn(e)}
+    updateInfoBtn={(e)=>updateInfoBtn(e)}
     deleteClick={(e)=>deleteInfoBtn(e)}
     />}
-      
+
+
+
 {isPending ? <div className="loader"></div> : 
 <div className="main-content">
 <table>

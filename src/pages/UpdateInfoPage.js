@@ -1,10 +1,10 @@
-const AddPage = ({closeAddBtn,firstName,lastName,email,phone,sex,handleChange,addBtn}) => {
+const UpdateInfoPage = ({closeAddBtn,firstName,lastName,email,phone,id,sex,handleChange,updateInfoBtn}) => {
 
             return (
                 <div className="add-page">
                     <button onClick={()=>  closeAddBtn()} className="proceed-btn">X</button>
-                    <h3>Register data manually</h3>
-                    <form className="add-form"  onSubmit={(e)=> addBtn(e)}>
+                    <h3>Update Info</h3>
+                    <form className="add-form" id={id}  onSubmit={(e)=> updateInfoBtn(e,id,firstName,lastName,email,phone,sex) }>
         <div id="name">
         <input className="name" type="text"  value={firstName} onChange={(e)=> handleChange(e)} id="firstName" placeholder="First name" required />
         <input className="name" type="text" value={lastName} onChange={(e)=> handleChange(e)} id="lastName"  placeholder="Last name" required />
@@ -25,7 +25,7 @@ const AddPage = ({closeAddBtn,firstName,lastName,email,phone,sex,handleChange,ad
   </div>
    </div>
                 <div className="btn-container">
-        <button type="submit"  className="proceed-btn">Add New</button>
+        <button type="submit"  className="proceed-btn">Update</button>
         </div>
              </form>  
               </div>
@@ -33,4 +33,4 @@ const AddPage = ({closeAddBtn,firstName,lastName,email,phone,sex,handleChange,ad
         }
 
 
-export default AddPage;
+export default UpdateInfoPage;
