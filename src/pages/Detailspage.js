@@ -13,7 +13,9 @@ const [_email, setEmail] = useState(email)
 const [_phone, setPhone] = useState(phone)
 const [_sex, setSex] = useState(sex)
 
-const closeUpdatePage = ()=> setUpdateInfoPageToggle(false)
+const closeUpdatePage = ()=> {setUpdateInfoPageToggle(false)
+closeClick()
+}
 
 //state storage input function 
 const handleChange = (e)=>{
@@ -44,7 +46,7 @@ return (<>
 {updateInfoPageToggle &&
 <UpdateInfoPage 
 updateInfoBtn={(e)=>updateInfoBtn(e)}
-closeAddBtn={()=>closeUpdatePage()}
+closeUpdatePage={()=>closeUpdatePage()}
 handleChange={(e)=>handleChange(e)}
 firstName={_firstName}
 lastName={_lastName}

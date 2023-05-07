@@ -154,14 +154,7 @@ transition: .5s;
       .utility-section{
         background-color: transparent;
         width: 20%;
-        position: fixed;
-        display: flex;
-        height: 100%;
-        flex-direction: column;
-        gap: 21px;
-        align-items: center;
-        z-index: 2;
-        overflow: auto;
+        z-index: 1;
         top: 5%;
         left: 80%; 
       }
