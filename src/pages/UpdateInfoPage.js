@@ -1,8 +1,8 @@
-const UpdateInfoPage = ({closeAddBtn,firstName,lastName,email,phone,id,sex,handleChange,updateInfoBtn}) => {
+const UpdateInfoPage = ({closeUpdatePage,firstName,lastName,email,phone,id,sex,handleChange,updateInfoBtn}) => {
 
             return (
                 <div className="add-page">
-                    <button onClick={()=>  closeAddBtn()} className="proceed-btn">X</button>
+                    <button onClick={()=>  closeUpdatePage()} className="proceed-btn">X</button>
                     <h3>Update Info</h3>
                     <form className="add-form" id={id}  onSubmit={(e)=> updateInfoBtn(e,id,firstName,lastName,email,phone,sex) }>
         <div id="name">
@@ -12,7 +12,7 @@ const UpdateInfoPage = ({closeAddBtn,firstName,lastName,email,phone,id,sex,handl
                 <div id="mail">
             <input className="email" type="email" value={email} onChange={(e)=> handleChange(e)} id="email"  placeholder="Email" required />
             
-            <input className="email" type="phone" value={phone} onChange={(e)=> handleChange(e)} id="phone"  placeholder="Phone number" required />
+            <input className="email" type="number" value={phone} onChange={(e)=> handleChange(e)} id="phone"  placeholder="Phone number" required />
                 </div>
                 <div className="radio">
         <div className="radio-one">

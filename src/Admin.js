@@ -180,7 +180,7 @@ let obj ={
 
 await axios.put(`${Uri}update-person/${id}`, obj)
         .then((res) => {
-            alert(obj.firstName +' '+  obj.lastName + 's profile has been updated, Kindly refresh')
+            alert(obj.firstName +' '+  obj.lastName + 's profile has been updated, kindly refresh')
         }).catch((error) => {
             console.log(error)
             alert('Some error occured, couldnt update' + obj.firstName + obj.lastName + 's profile')
@@ -192,13 +192,16 @@ const deleteInfoBtn =async(e)=> {
 let id = e.target.id;
 console.log(`person with id ${id} is ready to be deleted`);
 
+
+if(window.confirm('Are you sure you want to delete this person data?')){
  await axios.delete(`${Uri}delete-person/${id}`)
         .then((res) => {
-            alert('persons data has been successfully deleted!')
+            alert('person data has been successfully deleted!, kindly refresh')
         }).catch((error) => {
             console.log(error)
             alert('Some error occured, couldnt delete student')
         })
+    }
 
         closeInfoBtn()
 }
